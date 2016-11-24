@@ -8,19 +8,18 @@
   <body>
 
     <script>
-    // Linear Scales
-      var scale = d3.scale.linear()
-        .domain([0, 1]) //data range, these are setter functions
-        .range([0, 100]); //pixel range
 
-      console.log(scale.domain()); // it will give you the domain
-      console.log(scale(0)); //prints 0
-      console.log(scale(0.5)); // prints 50
-      console.log(scale(1)); //prints 100
+// Ordinal Scale
+// deals with data that has discret values
+// ordered things that are unique and distinct
+var scale = d3.scale.ordinal()
+     .domain(["A", "B", "C", "D"])
+     .rangeRoundPoints([0, 100]);
 
-// data space vs. pixel space
-// scale == is
-// scales transforms numbers from data space into pixel space
+   console.log(scale("A")); // Prints Apple
+   console.log(scale("B")); // Prints Banana
+   console.log(scale("C")); // Prints Coconut
+
 
     </script>
   </body>
