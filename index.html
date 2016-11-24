@@ -51,7 +51,7 @@ function render(data) {
   .x(function(d){ return scaleYear(d.year)})
   .y(function(d) { return scale(d.mean)});
 
- scale.domain(d3.extent(data, function (d){ return d.mean; }));
+ scale.domain(d3.extent(data, function (d){ return d.mean; }).reverse());
 
   //NEST
   groupData = d3.nest()
