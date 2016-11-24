@@ -7,30 +7,14 @@
   </head>
   <body>
 
-
-    <svg width="250" height="250">
-      <rect x="50" y="50" width="20" height="20"></rect>
-    </svg>
-
     <script>
+    var _ = require('lodash');
 
-    function type(d){
-          d.sepal_length = +d.sepal_length;
-          d.sepal_width  = +d.sepal_width;
-          d.petal_length = +d.petal_length;
-          d.petal_width  = +d.petal_width;
-          return d;
-        }
-        d3.csv("iris.csv", type, function (data){
-          var extent = d3.extent(data, function (d){ return d.sepal_length; });
-          console.log(extent);
-          // OR does the same as
-          // var min = d3.min(data, function (d){ return d.sepal_length; });
-          // var max = d3.max(data, function (d){ return d.sepal_length; });
-          // console.log([min, max]);
-        });
-
-
+    d3.csv("obesity.csv", function(dataset) {
+      dataset = _.filter(dataset, [location_name, "Afghanistan"]);
+      console.log(dataset);
+    });
     </script>
+
   </body>
 </html>
