@@ -4,15 +4,47 @@
     <meta charset="utf-8">
     <title>Global Obesity Changes</title>
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.2/lodash.min.js"></script>
   </head>
   <body>
-
+    <style>
+      .male {
+        fill: blue;
+      }
+      .female {
+        fill: pink;
+      }
+      .both {
+        fill: yellow;
+      }
+    </style>
     <script>
-    var _ = require('lodash');
+    var svg = d3.select("body").append("svg")
+      .attr("width", 300)
+      .attr("height", 300);
+    var scale = d3.scale.linear()
+      .domain([1, 0])
+      .range([0, 300]);
 
-    d3.csv("obesity.csv", function(dataset) {
-      dataset = _.filter(dataset, [location_name, "Afghanistan"]);
-      console.log(dataset);
+    var scaleYear = d3.scale.linear()
+      .domain([1990, 2013])
+      .range([0, 300]);
+
+    d3.csv("obesity.csv", function(data) {
+      data = _.filter(data, ["location_name", "Afghanistan"])
+      _.remove(data, ["sex", "both"])
+      console.log(data);
+
+    var points = svg.selectAll("circle")
+        .data(data);
+
+    points.enter().append("circle")
+          .attr("r", 5);
+
+    points
+      .attr("cx", function(d){ return scaleYear(+d.year)})
+      .attr("cy", function(d) { return scale(+d.mean)})
+      .attr("class", function(d) { return d.sex })
     });
     </script>
 
