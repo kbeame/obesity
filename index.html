@@ -14,22 +14,39 @@
 
     <script>
 
-    var data = [1, 2, 3, 4, 5];
-    var scale = d3.scale.linear()
-      .domain([1, 5])   // Data space
-      .range([0, 200]); // Pixel space
 
-    var svg = d3.select("body").append("svg")
-      .attr("width",  250)
-      .attr("height", 250);
+        var scale = d3.scale.linear()
+          .domain([1, 5])   // Data space
+          .range([0, 200]); // Pixel space
+        var svg = d3.select("body").append("svg")
+          .attr("width",  250)
+          .attr("height", 250);
 
-    svg.selectAll("rect")
-      .data(data)
-    .enter().append("rect") // enter does not update data
-      .attr("x", scale)
-      .attr("y", 50)
-      .attr("width",  20)
-      .attr("height", function (d){ return scale(d); });
+        function render(data, color){
+          // binds the data
+          var rects = svg.selectAll("rect").data(data);
+          // enter
+          rects.enter().append("rect")
+          .attr("y", 50)
+          .attr("width",  20)
+          .attr("height", 20)
+          // static properties can go in the enter faze
+
+    // Update
+          rects
+          // update faze will include all that is needed to be updated
+            .attr("x", scale)
+            .attr("fill", color);
+//exit will get rid of dom elements,
+// only triggers when there are less data elements
+// than dom elements
+          rects.exit().remove();
+        }
+setTimeout( function (){ render([1, 2, 2.5],     "red");    }, 1000);
+setTimeout( function (){ render([1, 2, 3, 4, 5], "blue");   }, 2000);
+setTimeout( function (){ render([1, 2],          "green");  }, 3000);
+setTimeout( function (){ render([3, 4, 5],       "cyan");   }, 4000);
+setTimeout( function (){ render([4, 5],          "magenta");}, 5000);
 
     </script>
   </body>
