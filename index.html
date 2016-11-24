@@ -49,77 +49,60 @@
       .domain([1990, 2013])
       .range([0, 300]);
 
-// read the obesity csv. Filter it using lodash to only
-//contain one location_name
-    d3.csv("obesity.csv", function(data) {
-      data = _.filter(data, ["location_name", "Canada"])
-      //remove all with sex as both
-      _.remove(data, ["sex", "both"])
-      //remove all with metric as overweight
-      _.remove(data, ["metric", "overweight"]);
-      //WHAT IS DATA
-      //data now is an array of objects of all the Canada data btoh male and female
-      // unsorted for age (though the data is generally sorted by age grouping)
+
+function render(data) {
+  data = _.filter(data, ["location_name", "Canada"])
+  _.remove(data, ["sex", "both"])
+  _.remove(data, ["metric", "overweight"]);
+
+//bind data
+  var line = d3.svg.line()
+  .x(function(d){ return scaleYear(d.year)})
+  .y(function(d) { return scale(d.mean)});
+
+  //NEST
+  groupData = d3.nest()
+  .key(function(d) { return d.sex; })
+  .key(function(d) { return d.age_group_id; })
+  .entries(data);
+
+  var sexGroup = svg.selectAll(".sex")
+  .data(groupData)
+  .enter().append("g")
+  .attr("class", "sex")
+  .attr("transform", function(d, i) { return "translate("+ (i*300) + " ,0)"; });
+
+  // going off of groupData.values (the objects within the initial array)
+  var ageGroup = sexGroup.selectAll(".age")
+  .data(function(d) { return (d.values); })
+  .enter().append("g")
+  .attr("class", "age");
 
 
-//NEST
-// Nest groups the data into the new variable (in this case groupData)
-// it groups the data by the order of the keys called
-// In this case it orders them by unique sex
-// then within that by unique age
-    groupData = d3.nest()
-      .key(function(d) { return d.sex; })
-      .key(function(d) { return d.age_group_id; })
-      .entries(data);
-      // WHAT is groupData?
-      // groupData is an array of two objects
-      // each has a key of a sex and a value of an array of objects
-      // each objects has a key of age_group_id and a value of an array of...
-      // each object in the array has a key of the age_group_id and a value of ...
-      // these objects are finally the data per age group and sex that we want
-      // they are sorted by year (huzzah!)
-      //groupData[0] = male
-      //groupData[1] = female
-      //groupData[x][x (0-18)] = a specific age group key id
-      //groupData[x][x (0-18)][]
-    console.log(groupData[0]); // male object
-    console.log(groupData[0].values); // array of objects of...
-    console.log(groupData[0].values[0]); // object with key of age_group_id
-    console.log(groupData[0].values[0].values); // array of objects of...
-    console.log(groupData[0].values[0].values[0]); // object with significant data
-    console.log(groupData[0].values[0].values[0].year); // year of point
 
-// creating a Sex group using groupData
-// creating a class of sex
-// transforming (aka moving over) the women over by 300 pixels
-    var sexGroup = svg.selectAll(".sex")
-      .data(groupData)
-      .enter().append("g")
-        .attr("class", "sex")
-        .attr("transform", function(d, i) { return "translate("+ (i*300) + " ,0)"; });
-
-// going off of groupData.values (the objects within the initial array)
-    var ageGroup = sexGroup.selectAll(".age")
-        .data(function(d) { return (d.values); })
-        .enter().append("g")
-          .attr("class", "age");
-
-// created a line (this version is d3 3 not 4)
-// made the x scale year
-//made the y axis scale the mean
-    var line = d3.svg.line()
-        .x(function(d){ return scaleYear(+d.year)})
-        .y(function(d) { return scale(+d.mean)});
-//append the path (aka lines) via the ageGroup
-//
-    ageGroup.append("path")
-      .attr("class", function(d) {
-        console.log(d.values[0].sex)
-        return "line " + d.values[0].sex})
-      .attr("d", function(d) { return line(d.values); })
+  ageGroup.append("path")
+  .attr("class", function(d) {
+    console.log(d.values[0].sex)
+    return "line " + d.values[0].sex})
+    .attr("d", function(d) { return line(d.values); })
+}
 
 
-    });
+function type(d) {
+  d.location_id = +d.location_id;
+  d.age_start = +d.age_start;
+  d.age_end = +d.age_end;
+  d.sex_id = +d.sex_id;
+  d.lower = +d.lower;
+  d.upper = +d.upper;
+  d.mean = +d.mean;
+  d.year = +d.year;
+  d.age_group_id = +d.age_group_id;
+  return d;
+}
+
+d3.csv("obesity.csv", type, render);
+
     </script>
 
   </body>
