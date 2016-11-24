@@ -33,18 +33,9 @@
 // Scales
       // median y|_x year
 
-    // Scale for the Y axis (median obesity)
-    // this is a scale function that can be called
-    // the domain is the data points
-    // the range are the pixel points
-    //note: the domain is switched so that "0" is where we visually expect
     var scale = d3.scale.linear()
-      .domain([0.3, 0])
       .range([0, 300]);
 
-// Scale (function) for the x axis (year from 1990-2013)
-// note that the "range"[=pixel] goes only to 300
-// though the total svg is 600pxl
     var scaleYear = d3.scale.linear()
       .domain([1990, 2013])
       .range([0, 300]);
@@ -59,6 +50,8 @@ function render(data) {
   var line = d3.svg.line()
   .x(function(d){ return scaleYear(d.year)})
   .y(function(d) { return scale(d.mean)});
+
+ scale.domain(d3.extent(data, function (d){ return d.mean; }));
 
   //NEST
   groupData = d3.nest()
