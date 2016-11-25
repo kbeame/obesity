@@ -8,6 +8,7 @@
   </head>
   <body>
     <style>
+    /*styling for the classes assigned below*/
       .male {
         stroke: blue;
       }
@@ -22,51 +23,91 @@
         stroke-width: 1.5px;
       }
     </style>
+
+
     <script>
+
+    var xAxis = "mean"
+    var yAxis = "year"
+    var margin = {
+      left: 30,
+      top: 30,
+      right: 30,
+      bottom: 30
+    };
+
+    // creating an svg and appending it to the body of the page
     var svg = d3.select("body").append("svg")
       .attr("width", 600)
       .attr("height", 300);
+// Scales
+      // median y|_x year
+ // var g = svg.append("g")
+
     var scale = d3.scale.linear()
-      .domain([0.3, 0])
-      .range([0, 300]);
+      .range([300, 0]);
 
     var scaleYear = d3.scale.linear()
-      .domain([1990, 2013])
       .range([0, 300]);
 
-    d3.csv("obesity.csv", function(data) {
-      data = _.filter(data, ["location_name", "Canada"])
-      _.remove(data, ["sex", "both"])
-      _.remove(data, ["metric", "overweight"]);
 
-    groupData = d3.nest()
-      .key(function(d) { return d.sex; })
-      .key(function(d) { return d.age_group_id; })
-      .entries(data);
-    console.log(groupData);
+function render(data) {
+  data = _.filter(data, ["location_name", "Canada"])
+  _.remove(data, ["sex", "both"])
+  _.remove(data, ["metric", "overweight"]);
 
+//bind data
+  var line = d3.svg.line()
+  .x(function(d){ return scaleYear(d.year)})
+  .y(function(d) { return scale(d.mean)});
 
-    var sexGroup = svg.selectAll(".sex")
-      .data(groupData)
-      .enter().append("g")
-        .attr("class", "sex")
-        .attr("transform", function(d, i) { return "translate("+ (i*300) + " ,0)"; });
-
-    var ageGroup = sexGroup.selectAll(".age")
-        .data(function(d) { return (d.values); })
-        .enter().append("g")
-          .attr("class", "age");
+ scale.domain(d3.extent(data, function (d){ return d[xAxis]; }));
+ scaleYear.domain(d3.extent(data, function (d){ return d[yAxis]; }));
 
 
-    var line = d3.svg.line()
-        .x(function(d){ return scaleYear(+d.year)})
-        .y(function(d) { return scale(+d.mean)});
+  //NEST
+  groupData = d3.nest()
+  .key(function(d) { return d.sex; })
+  .key(function(d) { return d.age_group_id; })
+  .entries(data);
 
-    ageGroup.append("path")
-      .attr("class", function(d) { return "line " + d.values[0].sex})
-      .attr("d", function(d) { return line(d.values); })
+  var sexGroup = svg.selectAll(".sex")
+  .data(groupData)
+  .enter().append("g")
+  .attr("class", "sex")
+  .attr("transform", function(d, i) { return "translate("+ (i * 300) + " ,0)"; });
 
-    });
+  // going off of groupData.values (the objects within the initial array)
+  var ageGroup = sexGroup.selectAll(".age")
+  .data(function(d) { return (d.values); })
+  .enter().append("g")
+  .attr("class", "age");
+
+
+
+  ageGroup.append("path")
+  .attr("class", function(d) {
+    console.log(d.values[0].sex)
+    return "line " + d.values[0].sex})
+    .attr("d", function(d) { return line(d.values); })
+}
+
+
+function type(d) {
+  d.location_id = +d.location_id;
+  d.age_start = +d.age_start;
+  d.age_end = +d.age_end;
+  d.sex_id = +d.sex_id;
+  d.lower = +d.lower;
+  d.upper = +d.upper;
+  d.mean = +d.mean;
+  d.year = +d.year;
+  d.age_group_id = +d.age_group_id;
+  return d;
+}
+
+d3.csv("obesity.csv", type, render);
+
     </script>
 
   </body>
