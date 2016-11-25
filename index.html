@@ -58,6 +58,9 @@
       // median y|_x year
  // var g = svg.append("g")
 
+ var g = svg.append("g")
+     .attr("transform", "translate(" + padding.left + "," + padding.top + ")")
+
   var scale = d3.scale.linear()
       .range([width/2, 0]);
 
@@ -66,15 +69,23 @@
 
 //axis
 
-// var xAxis = d3.svg.axis()
-//     .scale(scale)
-//     .orient("bottom");
+var xAxis = d3.svg.axis()
+    .scale(scaleYear)
+    .orient("bottom");
 //
 // var yAxis = d3.svg.axis()
-//         .scale(scaleYear)
-//         .orient("left");
+//       .scale(scale)
+//       .orient("right");
 
+g.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis);
 
+// g.append("g")
+//     .attr("class", "y axis")
+//     .attr("transform", "translate(" + width + ",0)")
+//     .call(yAxis);
 
 function render(data) {
   data = _.filter(data, ["location_name", "Canada"])
