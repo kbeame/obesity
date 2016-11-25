@@ -30,25 +30,50 @@
     var xAxis = "mean"
     var yAxis = "year"
     var margin = {
-      left: 30,
-      top: 30,
-      right: 30,
-      bottom: 30
+      left: 10,
+      top: 10,
+      right: 10,
+      bottom: 10
     };
+    var padding = {
+      left: 20,
+      top: 20,
+      right: 20,
+      bottom: 20
+    };
+  var outerWidth = 960;
+  var outerHeight = 500;
+  var innerWidth = outerWidth - margin.left - margin.right;
+  var innerHeight = outerHeight - margin.top - margin.bottom;
+  var width = innerWidth - padding.left - padding.right;
+  var height = innerHeight - padding.top - padding.bottom;
 
     // creating an svg and appending it to the body of the page
     var svg = d3.select("body").append("svg")
-      .attr("width", 600)
-      .attr("height", 300);
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 // Scales
       // median y|_x year
  // var g = svg.append("g")
 
-    var scale = d3.scale.linear()
-      .range([300, 0]);
+  var scale = d3.scale.linear()
+      .range([width/2, 0]);
 
-    var scaleYear = d3.scale.linear()
-      .range([0, 300]);
+  var scaleYear = d3.scale.linear()
+      .range([0, height]);
+
+//axis
+
+// var xAxis = d3.svg.axis()
+//     .scale(scale)
+//     .orient("bottom");
+//
+// var yAxis = d3.svg.axis()
+//         .scale(scaleYear)
+//         .orient("left");
+
 
 
 function render(data) {
@@ -75,7 +100,7 @@ function render(data) {
   .data(groupData)
   .enter().append("g")
   .attr("class", "sex")
-  .attr("transform", function(d, i) { return "translate("+ (i * 300) + " ,0)"; });
+  .attr("transform", function(d, i) { return "translate("+ (i * (width/2 - margin.left)) + " ,0)"; });
 
   // going off of groupData.values (the objects within the initial array)
   var ageGroup = sexGroup.selectAll(".age")
