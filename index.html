@@ -26,18 +26,28 @@
 
 
     <script>
+
+    var xAxis = "mean"
+    var yAxis = "year"
+    var margin = {
+      left: 30,
+      top: 30,
+      right: 30,
+      bottom: 30
+    };
+
     // creating an svg and appending it to the body of the page
     var svg = d3.select("body").append("svg")
       .attr("width", 600)
       .attr("height", 300);
 // Scales
       // median y|_x year
+ // var g = svg.append("g")
 
     var scale = d3.scale.linear()
-      .range([0, 300]);
+      .range([300, 0]);
 
     var scaleYear = d3.scale.linear()
-      .domain([1990, 2013])
       .range([0, 300]);
 
 
@@ -51,7 +61,9 @@ function render(data) {
   .x(function(d){ return scaleYear(d.year)})
   .y(function(d) { return scale(d.mean)});
 
- scale.domain(d3.extent(data, function (d){ return d.mean; }).reverse());
+ scale.domain(d3.extent(data, function (d){ return d[xAxis]; }));
+ scaleYear.domain(d3.extent(data, function (d){ return d[yAxis]; }));
+
 
   //NEST
   groupData = d3.nest()
@@ -63,7 +75,7 @@ function render(data) {
   .data(groupData)
   .enter().append("g")
   .attr("class", "sex")
-  .attr("transform", function(d, i) { return "translate("+ (i*300) + " ,0)"; });
+  .attr("transform", function(d, i) { return "translate("+ (i * 300) + " ,0)"; });
 
   // going off of groupData.values (the objects within the initial array)
   var ageGroup = sexGroup.selectAll(".age")
