@@ -7,6 +7,51 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.2/lodash.min.js"></script>
   </head>
   <body>
+    <p>
+
+    </p>
+    <p>
+
+    </p>
+    <p>
+
+    </p>
+    <p>
+
+    </p>
+    <p>
+
+    </p>
+    <p>
+
+    </p>
+    <p>
+
+    </p>
+    <p>
+
+    </p>
+    <p>
+
+    </p>
+    <p>
+
+    </p>
+    <p>
+
+    </p>
+    <p>
+
+    </p>
+    <p>
+
+    </p>
+    <p>
+
+    </p>
+    <p>
+
+    </p>
     <style>
     /*styling for the classes assigned below*/
       .male {
@@ -34,7 +79,7 @@
     var yAxisLabel = "mean"
     var xAxisLabel = "year"
     var margin = {
-      left: 20,
+      left: 80,
       top: 20,
       right: 20,
       bottom: 20
@@ -90,10 +135,20 @@ g.append("g")
     .attr("transform", "translate(0," + width + ")")
     .call(xAxis);
 
+
 g.append("g")
     .attr("class", "y-axis")
-    .attr("transform", "translate(" + height + ",0)")
-    .call(yAxis);
+    // .attr("transform", "translate(" + height + ",0)")
+    .call(yAxis)
+    .append("text")
+     .attr("transform", "rotate(-90)")
+     .attr("transform", "translate(0," + width + "0)")
+     .attr("y", 2)
+     .attr("x", 20)
+     .attr("dy", "0.51em")
+     .attr("fill", "#000")
+    //  .orient("left")
+     .text("% Obesity");
 
 
 
@@ -123,8 +178,8 @@ function render(data) {
   var sexGroup = svg.selectAll(".sex")
   .data(groupData)
   .enter().append("g")
-  .attr("class", "sex")
-  .attr("transform", function(d, i) { return "translate("+ (i * (width/2)) + " ,0)"; });
+  .attr("class", "sex");
+  // .attr("transform", function(d, i) { return "translate("+ (i * (width/2)) + " ,0)"; });
 
   // going off of groupData.values (the objects within the initial array)
   var ageGroup = sexGroup.selectAll(".age")
