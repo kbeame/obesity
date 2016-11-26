@@ -22,24 +22,28 @@
         fill: none;
         stroke-width: 1.5px;
       }
+      .inner {
+        fill: none;
+        stroke: orange;
+      }
     </style>
 
 
     <script>
 
-    var xAxis = "mean"
-    var yAxis = "year"
+    var yAxisLabel = "mean"
+    var xAxisLabel = "year"
     var margin = {
-      left: 10,
-      top: 10,
-      right: 10,
-      bottom: 10
-    };
-    var padding = {
       left: 20,
       top: 20,
       right: 20,
       bottom: 20
+    };
+    var padding = {
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0
     };
   var outerWidth = 960;
   var outerHeight = 500;
@@ -55,37 +59,43 @@
       .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 // Scales
-      // median y|_x year
- // var g = svg.append("g")
+      // mean y|_x year
 
  var g = svg.append("g")
      .attr("transform", "translate(" + padding.left + "," + padding.top + ")")
 
   var scale = d3.scale.linear()
-      .range([width/2, 0]);
+      .range([height, 0]);
 
   var scaleYear = d3.scale.linear()
-      .range([0, height]);
+      .range([0, width]);
 
 //axis
-
-var xAxis = d3.svg.axis()
-    .scale(scaleYear)
-    .orient("bottom");
 //
-// var yAxis = d3.svg.axis()
-//       .scale(scale)
-//       .orient("right");
+var xAxis = d3.svg.axis()
+    .orient("bottom")
+    .scale(scaleYear);
+
+var yAxis = d3.svg.axis()
+      .orient("left")
+      .scale(scale);
+
+g.append("rect")
+    .attr("class", "inner")
+    .attr("width", width)
+    .attr("height", height);
 
 g.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
+    .attr("class", "x-axis")
+    .attr("transform", "translate(0," + width + ")")
     .call(xAxis);
 
-// g.append("g")
-//     .attr("class", "y axis")
-//     .attr("transform", "translate(" + width + ",0)")
-//     .call(yAxis);
+g.append("g")
+    .attr("class", "y-axis")
+    .attr("transform", "translate(" + height + ",0)")
+    .call(yAxis);
+
+
 
 function render(data) {
   data = _.filter(data, ["location_name", "Canada"])
@@ -97,8 +107,11 @@ function render(data) {
   .x(function(d){ return scaleYear(d.year)})
   .y(function(d) { return scale(d.mean)});
 
- scale.domain(d3.extent(data, function (d){ return d[xAxis]; }));
- scaleYear.domain(d3.extent(data, function (d){ return d[yAxis]; }));
+ scale.domain(d3.extent(data, function (d){ return d[yAxisLabel]; }));
+  // scaleYear.domain(['1990', '2013']);
+ scaleYear.domain( d3.extent(data, function (d){
+   console.log(d[xAxisLabel]);
+   return d[xAxisLabel]; }));
 
 
   //NEST
@@ -111,7 +124,7 @@ function render(data) {
   .data(groupData)
   .enter().append("g")
   .attr("class", "sex")
-  .attr("transform", function(d, i) { return "translate("+ (i * (width/2 - margin.left)) + " ,0)"; });
+  .attr("transform", function(d, i) { return "translate("+ (i * (width/2)) + " ,0)"; });
 
   // going off of groupData.values (the objects within the initial array)
   var ageGroup = sexGroup.selectAll(".age")
