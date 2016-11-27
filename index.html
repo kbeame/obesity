@@ -7,51 +7,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.2/lodash.min.js"></script>
   </head>
   <body>
-    <p>
 
-    </p>
-    <p>
-
-    </p>
-    <p>
-
-    </p>
-    <p>
-
-    </p>
-    <p>
-
-    </p>
-    <p>
-
-    </p>
-    <p>
-
-    </p>
-    <p>
-
-    </p>
-    <p>
-
-    </p>
-    <p>
-
-    </p>
-    <p>
-
-    </p>
-    <p>
-
-    </p>
-    <p>
-
-    </p>
-    <p>
-
-    </p>
-    <p>
-
-    </p>
     <style>
     /*styling for the classes assigned below*/
       .male {
@@ -116,7 +72,6 @@
       .range([0, width]);
 
 //axis
-//
 var xAxis = d3.svg.axis()
     .orient("bottom")
     .scale(scaleYear);
@@ -132,17 +87,21 @@ g.append("rect")
 
 g.append("g")
     .attr("class", "x-axis")
-    .attr("transform", "translate(0," + width + ")")
+    .attr("transform", "translate(0," + (height) + ")")
+    // .attr("transform", "translate(" + height + ",0)")
+    // .attr("transform", "translate(," + width + ")")
     .call(xAxis);
 
-
+//y axis label
 g.append("g")
     .attr("class", "y-axis")
+    .attr("x", height)
     // .attr("transform", "translate(" + height + ",0)")
     .call(yAxis)
     .append("text")
-     .attr("transform", "rotate(-90)")
-     .attr("transform", "translate(0," + width + "0)")
+     .attr("transform", "rotate(-180)")
+      .attr("transform", "translate(-80," + (height) + ")")
+
      .attr("y", 2)
      .attr("x", 20)
      .attr("dy", "0.51em")
