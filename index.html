@@ -38,7 +38,7 @@
       left: 80,
       top: 20,
       right: 20,
-      bottom: 20
+      bottom: 80
     };
     var padding = {
       left: 0,
@@ -85,28 +85,29 @@ g.append("rect")
     .attr("width", width)
     .attr("height", height);
 
+//x axis label
 g.append("g")
     .attr("class", "x-axis")
-    .attr("transform", "translate(0," + (height) + ")")
-    // .attr("transform", "translate(" + height + ",0)")
-    // .attr("transform", "translate(," + width + ")")
-    .call(xAxis);
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis)
+    .append("text")
+     .attr("y", 40)
+     .attr("x", (width/2-50))
+     .attr("dy", "0.51em")
+     .attr("fill", "#000")
+     .text("Year (1990-2013)");
 
 //y axis label
 g.append("g")
     .attr("class", "y-axis")
     .attr("x", height)
-    // .attr("transform", "translate(" + height + ",0)")
     .call(yAxis)
     .append("text")
-     .attr("transform", "rotate(-180)")
-      .attr("transform", "translate(-80," + (height) + ")")
-
-     .attr("y", 2)
-     .attr("x", 20)
-     .attr("dy", "0.51em")
-     .attr("fill", "#000")
-    //  .orient("left")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 10)
+      .attr("x", -70)
+      .attr("dy", "0.51em")
+     .  attr("fill", "#000")
      .text("% Obesity");
 
 
@@ -122,10 +123,10 @@ function render(data) {
   .y(function(d) { return scale(d.mean)});
 
  scale.domain(d3.extent(data, function (d){ return d[yAxisLabel]; }));
-  // scaleYear.domain(['1990', '2013']);
- scaleYear.domain( d3.extent(data, function (d){
-   console.log(d[xAxisLabel]);
-   return d[xAxisLabel]; }));
+  scaleYear.domain(['1990', '2013']);
+ // scaleYear.domain( d3.extent(data, function (d){
+ //   console.log(d[xAxisLabel]);
+ //   return d[xAxisLabel]; }));
 
 
   //NEST
