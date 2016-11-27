@@ -7,6 +7,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.2/lodash.min.js"></script>
   </head>
   <body>
+
     <style>
     /*styling for the classes assigned below*/
       .male {
@@ -22,33 +23,93 @@
         fill: none;
         stroke-width: 1.5px;
       }
+      .inner {
+        fill: none;
+        stroke: orange;
+      }
     </style>
 
 
     <script>
 
-    var xAxis = "mean"
-    var yAxis = "year"
+    var yAxisLabel = "mean"
+    var xAxisLabel = "year"
     var margin = {
-      left: 30,
-      top: 30,
-      right: 30,
-      bottom: 30
+      left: 80,
+      top: 20,
+      right: 20,
+      bottom: 80
     };
+    var padding = {
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0
+    };
+  var outerWidth = 960;
+  var outerHeight = 500;
+  var innerWidth = outerWidth - margin.left - margin.right;
+  var innerHeight = outerHeight - margin.top - margin.bottom;
+  var width = innerWidth - padding.left - padding.right;
+  var height = innerHeight - padding.top - padding.bottom;
 
     // creating an svg and appending it to the body of the page
     var svg = d3.select("body").append("svg")
-      .attr("width", 600)
-      .attr("height", 300);
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 // Scales
-      // median y|_x year
- // var g = svg.append("g")
+      // mean y|_x year
 
-    var scale = d3.scale.linear()
-      .range([300, 0]);
+ var g = svg.append("g")
+     .attr("transform", "translate(" + padding.left + "," + padding.top + ")")
 
-    var scaleYear = d3.scale.linear()
-      .range([0, 300]);
+  var scale = d3.scale.linear()
+      .range([height, 0]);
+
+  var scaleYear = d3.scale.linear()
+      .range([0, width]);
+
+//axis
+var xAxis = d3.svg.axis()
+    .orient("bottom")
+    .scale(scaleYear);
+
+var yAxis = d3.svg.axis()
+      .orient("left")
+      .scale(scale);
+
+g.append("rect")
+    .attr("class", "inner")
+    .attr("width", width)
+    .attr("height", height);
+
+//x axis label
+g.append("g")
+    .attr("class", "x-axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis)
+    .append("text")
+     .attr("y", 40)
+     .attr("x", (width/2-50))
+     .attr("dy", "0.51em")
+     .attr("fill", "#000")
+     .text("Year (1990-2013)");
+
+//y axis label
+g.append("g")
+    .attr("class", "y-axis")
+    .attr("x", height)
+    .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 10)
+      .attr("x", -70)
+      .attr("dy", "0.51em")
+     .  attr("fill", "#000")
+     .text("% Obesity");
+
 
 
 function render(data) {
@@ -61,8 +122,11 @@ function render(data) {
   .x(function(d){ return scaleYear(d.year)})
   .y(function(d) { return scale(d.mean)});
 
- scale.domain(d3.extent(data, function (d){ return d[xAxis]; }));
- scaleYear.domain(d3.extent(data, function (d){ return d[yAxis]; }));
+ scale.domain(d3.extent(data, function (d){ return d[yAxisLabel]; }));
+  scaleYear.domain(['1990', '2013']);
+ // scaleYear.domain( d3.extent(data, function (d){
+ //   console.log(d[xAxisLabel]);
+ //   return d[xAxisLabel]; }));
 
 
   //NEST
@@ -74,8 +138,8 @@ function render(data) {
   var sexGroup = svg.selectAll(".sex")
   .data(groupData)
   .enter().append("g")
-  .attr("class", "sex")
-  .attr("transform", function(d, i) { return "translate("+ (i * 300) + " ,0)"; });
+  .attr("class", "sex");
+  // .attr("transform", function(d, i) { return "translate("+ (i * (width/2)) + " ,0)"; });
 
   // going off of groupData.values (the objects within the initial array)
   var ageGroup = sexGroup.selectAll(".age")
