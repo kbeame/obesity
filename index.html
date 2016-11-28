@@ -5,6 +5,7 @@
     <title>Global Obesity Changes</title>
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.2/lodash.min.js"></script>
+    <script src="//d3js.org/d3-time-format.v2.min.js"></script>
   </head>
   <body>
 
@@ -65,50 +66,32 @@
  var g = svg.append("g")
      .attr("transform", "translate(" + padding.left + "," + padding.top + ")")
 
-  var scale = d3.scale.linear()
+  var y = d3.scale.linear()
       .range([height, 0]);
 
-  var scaleYear = d3.scale.linear()
+  var x = d3.scale.linear()
       .range([0, width]);
-
+//copied content, delete
+var formatAsPercentage = d3.format(".1%");
 //axis
 var xAxis = d3.svg.axis()
+    .scale(x)
     .orient("bottom")
-    .scale(scaleYear);
+    .ticks(23);
+
 
 var yAxis = d3.svg.axis()
-      .orient("left")
-      .scale(scale);
+      .scale(y)
+      .orient("left");
+
+      //copied content, delete
+      yAxis.tickFormat(formatAsPercentage);
 
 g.append("rect")
     .attr("class", "inner")
     .attr("width", width)
     .attr("height", height);
 
-//x axis label
-g.append("g")
-    .attr("class", "x-axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(xAxis)
-    .append("text")
-     .attr("y", 40)
-     .attr("x", (width/2-50))
-     .attr("dy", "0.51em")
-     .attr("fill", "#000")
-     .text("Year (1990-2013)");
-
-//y axis label
-g.append("g")
-    .attr("class", "y-axis")
-    .attr("x", height)
-    .call(yAxis)
-    .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 10)
-      .attr("x", -70)
-      .attr("dy", "0.51em")
-     .  attr("fill", "#000")
-     .text("% Obesity");
 
 
 
@@ -119,14 +102,22 @@ function render(data) {
 
 //bind data
   var line = d3.svg.line()
-  .x(function(d){ return scaleYear(d.year)})
-  .y(function(d) { return scale(d.mean)});
+  // .interpolate("basis")
+  .x(function(d){ return x(d.year)})
+  .y(function(d) { return y(d.mean)});
 
- scale.domain(d3.extent(data, function (d){ return d[yAxisLabel]; }));
-  scaleYear.domain(['1990', '2013']);
- // scaleYear.domain( d3.extent(data, function (d){
- //   console.log(d[xAxisLabel]);
- //   return d[xAxisLabel]; }));
+
+y.domain([0, 1]);
+ // y.domain(d3.extent(data, function (d){
+ //
+ //   return d[yAxisLabel]; }));
+ // x.domain(['1990','1991', '1992', '1993', '1994', '1995', '1996', '1997', '1998',
+  // '1999','2000','2001','2002','2003','2004', '2005', '2006', '2007', '2008',
+  // '2009','2010','2011', '2012','2013']);
+ // x.domain(formatTime([new Date(1990, 0, 1, 0), new Date(2013, 0, 1, 2)]));
+ x.domain( d3.extent(data, function (d){
+   console.log(d);
+   return d[xAxisLabel]; }));
 
 
   //NEST
@@ -143,7 +134,9 @@ function render(data) {
 
   // going off of groupData.values (the objects within the initial array)
   var ageGroup = sexGroup.selectAll(".age")
-  .data(function(d) { return (d.values); })
+  .data(function(d) {
+    console.log(d.values);
+    return (d.values); })
   .enter().append("g")
   .attr("class", "age");
 
@@ -171,6 +164,31 @@ function type(d) {
 }
 
 d3.csv("obesity.csv", type, render);
+
+//x axis label
+g.append("g")
+    .attr("class", "x-axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis)
+    .append("text")
+     .attr("y", 40)
+     .attr("x", (width/2-50))
+     .attr("dy", "0.51em")
+     .attr("fill", "#000")
+     .text("Year (1990-2013)");
+
+//y axis label
+g.append("g")
+    .attr("class", "y-axis")
+    .attr("x", height)
+    .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 10)
+      .attr("x", -70)
+      .attr("dy", "0.51em")
+     .  attr("fill", "#000")
+     .text("% Obesity");
 
     </script>
 
