@@ -141,7 +141,7 @@ module.exports = exports = (app) => {
         }
 
         //reading the data
-        d3.csv('only-obese-data.csv', type, loadData);
+        d3.csv('./only-obese-data.csv', type, loadData);
 
         //x axis label
         g.append('g')
