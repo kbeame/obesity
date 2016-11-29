@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = function(app) {
-  require('./obesityChartDirective')(app);
+  require('./obesityChartDirective.js')(app);
 };
