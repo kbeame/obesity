@@ -1,0 +1,40 @@
+body {
+  font-family: sans-serif;
+}
+.male {
+  stroke: blue;
+}
+.female {
+  stroke: pink;
+}
+.both {
+  fill: yellow;
+}
+.line {
+  fill: none;
+  stroke-width: 2px;
+}
+.inner {
+  fill: none;
+  stroke: grey;
+  stroke-width: 2px;
+}
+
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+  }
+  section {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    align-content: center;
+  }
+  select {
+    margin-left: 20px;
+  }
