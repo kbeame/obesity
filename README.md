@@ -5,7 +5,7 @@ The line graph illustrates the mean obesity prevalence for both males and female
 
 ## Deployed At:
 
-https://obesity.herokuapp.com/
+https://global-obesity.herokuapp.com/
 
 ## Author
 Katherine Beame
