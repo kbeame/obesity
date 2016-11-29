@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Obesity Prevalence</title>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.2/lodash.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+    <script src="./bundle.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body data-ng-app="obesityApp" ng-controller="dropCtrl">
+  <style>
+  /*styling for the classes assigned below*/
+    .male {
+      stroke: blue;
+    }
+    .female {
+      stroke: pink;
+    }
+    .both {
+      fill: yellow;
+    }
+    .line {
+      fill: none;
+      stroke-width: 1.5px;
+    }
+    .inner {
+      fill: none;
+      stroke: orange;
+    }
+  </style>
+    <header>
+      <h1>Obesity Prevalence in 20+ years age-standardized</h1>
+    </header>
+    <select ng-model="selectedCountry">
+      <option ng-repeat="name in countrylist"
+        value="{{name}}"
+        >{{name}}</option>
+    </select>
+    <h3>{{selectedCountry}}</h3>
+    <obesity-chart country="{{selectedCountry}}"></obesity-chart>
+  </body>
+</html>
