@@ -23,10 +23,9 @@ app.directive('obesityChart', function() {
     },
     link: function(scope, controller) {
 
-      let dataSet = [];
+    let dataSet = [];
     scope.$watch('country', function(country) {
       render(dataSet, country);
-      console.log("OH MY GOD IT CHANGED", country);
     });
     const yAxisLabel = "mean"
     const xAxisLabel = "year"
@@ -116,31 +115,40 @@ function loadData(data) {
         //NEST
       const groupData = d3.nest()
         .key(function(d) { return d.sex; })
-        .key(function(d) { return d.age_group_id; })
         .entries(data);
 
+        console.log('GROUPS', groupData);
+
           var sexGroup = svg.selectAll(".sex")
-          .data(groupData)
-          .enter().append("g")
-          .attr("class", "sex");
+          .data(groupData);
 
-          // going off of groupData.values (the objects within the initial array)
-          var ageGroup = sexGroup.selectAll(".age")
-          .data(function(d) {
-            return (d.values); })
+          sexGroup
             .enter().append("g")
-            .attr("class", "age");
+            .attr("class", "sex");
 
+          var lines = sexGroup
+            .selectAll(".line")
+            .data(function(d) {
+              return [d.values];
+            })
 
-
-            ageGroup.append("path")
+          lines.enter()
+            .append("path")
             .attr("class", function(d) {
-              // console.log(d.values[0].sex)
-              return "line " + d.values[0].sex})
-              .attr("d", function(d) { return line(d.values); });
-            }
+              return "line " + d[0].sex;
+            });
+
+          lines
+            .transition()
+            .duration(350)
+            .attr("d", function(d) {
+              return line(d);
+            });
+            
+          }
 
             function type(d) {
+
               d.location_id = +d.location_id;
               d.age_start = +d.age_start;
               d.age_end = +d.age_end;
@@ -153,7 +161,7 @@ function loadData(data) {
               return d;
             }
 
-            d3.csv("app/obesity.csv", type, loadData);
+            d3.csv("app/onlyObese.csv", type, loadData);
 
             //x axis label
             g.append("g")
