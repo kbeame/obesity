@@ -60,6 +60,10 @@ module.exports = {
         }
       },
       {
+        test: /\.csv$/,
+        loader: 'csv-loader'
+      },
+      {
         test: /\.html$/,
         loader: 'html'
       },
