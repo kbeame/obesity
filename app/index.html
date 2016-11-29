@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Obesity Prevalence</title>
+    <!-- <link rel="stylesheet" href="./css/style.css" charset="utf-8"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body data-ng-app="obesityApp" data-ng-controller="DropdownController as dropCtrl">
+    <header>
+      <h1>Obesity Prevalence in 20+ years age-standardized</h1>
+    </header>
+    <select>
+      <option ng-repeat="name in countrylist">{{name}}</option>
+    </select>
+
+    <!-- <main data-ng-view>
+
+    </main> -->
+  <script src="./bundle.js"></script>
+  </body>
+</html>
