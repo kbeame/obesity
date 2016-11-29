@@ -8,18 +8,26 @@ const app = angular.module('obesityApp', []);
 
 app.controller('dropCtrl', function($scope) {
   $scope.countrylist = ['United States', 'Canada', 'South Africa'];
+  // $scope.selectedCountry = this.countrylist[0];
+  // $scope.locationChange = function (item){
+    // this.countrylist = item;
+  // };
 });
 
 app.directive('obesityChart', function() {
   return {
-    restrict: 'EAC',
+    restrict: 'E',
     require: '^ngController',
     scope: {
-      country: '='
+      country: '@'
     },
     link: function(scope, controller) {
-    scope.country = controller.countrylist;
-    console.log(scope.country);
+
+      let dataSet = [];
+    scope.$watch('country', function(country) {
+      render(dataSet, country);
+      console.log("OH MY GOD IT CHANGED", country);
+    });
     const yAxisLabel = "mean"
     const xAxisLabel = "year"
     const margin = {
@@ -54,17 +62,21 @@ app.directive('obesityChart', function() {
       .attr("transform", "translate(" + padding.left + "," + padding.top + ")")
 
       var y = d3.scale.linear()
-      .range([height, 0]);
+        .range([height, 0])
+        .domain([0, 1]);
 
-      var x = d3.scale.linear()
-      .range([0, width]);
+      var startDate = new Date(1990, 0, 1, 0);
+      var endDate = new Date(2013, 0, 1, 0);
+      var x = d3.time.scale()
+        .domain([startDate, endDate])
+        .range([0, width]);
+
       //copied content, delete
       var formatAsPercentage = d3.format(".1%");
       //axis
       var xAxis = d3.svg.axis()
-      .scale(x)
-      .orient("bottom")
-      .ticks(23);
+        .scale(x)
+        .orient("bottom");
 
 
       var yAxis = d3.svg.axis()
@@ -79,28 +91,25 @@ app.directive('obesityChart', function() {
       .attr("width", width)
       .attr("height", height);
 
+//Load Data Function
+function loadData(data) {
+  dataSet = _.filter(data, ["age_group", "20+ yrs, age-standardized"]);
+  _.remove(data, ["sex", "both"])
+  _.remove(data, ["metric", "overweight"]);
+}
+//render??
 
-      function render(data) {
-        data = _.filter(data, ["location_name", 'South Africa'])
-        _.remove(data, ["sex", "both"])
-        _.remove(data, ["metric", "overweight"]);
-        data = _.filter(data, ["age_group", "20+ yrs, age-standardized"]);
+
+      function render(data, country) {
+        data = _.filter(dataSet, ["location_name", country])
         console.log(data);
         //bind data
         var line = d3.svg.line()
-          .x(function(d){ return x(d.year)})
+          .x(function(d){
+            var date = new Date(d.year,0,1,0);
+            return x(date);
+          })
           .y(function(d) { return y(d.mean)});
-
-        y.domain([0, 1]).nice();
-        x.domain([1990, 2013]).nice();
-
-        // y.domain(d3.extent(data, function (d){
-
-        //   return d[yAxisLabel]; }));
-        // x.domain(['1990','1991', '1992', '1993', '1994', '1995', '1996', '1997', '1998',
-        // '1999','2000','2001','2002','2003','2004', '2005', '2006', '2007', '2008',
-        // '2009','2010','2011', '2012','2013']);
-        // x.domain(formatTime([new Date(1990, 0, 1, 0), new Date(2013, 0, 1, 2)]));
 
 
 
@@ -110,54 +119,25 @@ app.directive('obesityChart', function() {
         .key(function(d) { return d.age_group_id; })
         .entries(data);
 
-        // x.domain( d3.extent(groupData[0].values[0].values, function (d){
-        //   console.log(d[xAxisLabel]);
-        //   //  return d[xAxisLabel];
-        //   return d[xAxisLabel]; }));
-
           var sexGroup = svg.selectAll(".sex")
           .data(groupData)
           .enter().append("g")
           .attr("class", "sex");
-          // .attr("transform", function(d, i) { return "translate("+ (i * (width/2)) + " ,0)"; });
 
           // going off of groupData.values (the objects within the initial array)
           var ageGroup = sexGroup.selectAll(".age")
           .data(function(d) {
-            // console.log(d.values);
             return (d.values); })
             .enter().append("g")
             .attr("class", "age");
 
 
-            // y.domain([0, 1]).nice();
-            // x.domain([1990, 2013]).nice();
-            // var xDomain = groupData.map(function(d) {
-            //   var male = "male"
-            //   if (d.key === "male") {
-            //     console.log(d);
-            //     for (i = 0; i < d.values[0].values.length; i++ ) {
-            //       console.log(d.values[0].values.length)
-            //       console.log(d.values[0].values[i]);
-            //       return d.values[0].values[i]
-            //     }
-            //   }
-            //  });
-            //
-            //  console.log(groupData);
-            //  console.log(xDomain);
-            //  x.domain([1990, 2013]).nice();
-            // console.log(groupData[0].values[0].values[0]);
-            // console.log(data);
-            // x.domain(xDomain);
 
             ageGroup.append("path")
             .attr("class", function(d) {
               // console.log(d.values[0].sex)
               return "line " + d.values[0].sex})
-              .attr("d", function(d) { return line(d.values); })
-
-
+              .attr("d", function(d) { return line(d.values); });
             }
 
             function type(d) {
@@ -173,7 +153,7 @@ app.directive('obesityChart', function() {
               return d;
             }
 
-            d3.csv("app/obesity.csv", type, render);
+            d3.csv("app/obesity.csv", type, loadData);
 
             //x axis label
             g.append("g")
@@ -197,10 +177,9 @@ app.directive('obesityChart', function() {
             .attr("y", 10)
             .attr("x", -70)
             .attr("dy", "0.51em")
-            .  attr("fill", "#000")
+            .attr("fill", "#000")
             .text("% Obesity");
 
-    },
-    templateUrl: '../d3/index.html'
+    }
   };
 });
