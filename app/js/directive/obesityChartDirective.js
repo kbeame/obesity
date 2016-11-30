@@ -9,6 +9,7 @@ module.exports = exports = (app) => {
       link: function(scope) {
         let dataSet = [];
         scope.$watch('country', function(country) {
+          console.log("RENDY", dataSet);
           render(dataSet, country);
         });
         const margin = {
