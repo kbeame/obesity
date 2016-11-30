@@ -61,7 +61,7 @@ module.exports = {
       },
       {
         test: /\.csv$/,
-        loader: 'csv-loader'
+        loader: 'dsv-loader'
       },
       {
         test: /\.html$/,
