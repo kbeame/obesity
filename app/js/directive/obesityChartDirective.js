@@ -7,11 +7,12 @@ module.exports = exports = (app) => {
         country: '@'
       },
       link: function(scope) {
-        let dataSet = [];
+        let dataSet = require('dsv!../../only-obese-data.CSV');
+
         scope.$watch('country', function(country) {
-          console.log("RENDY", dataSet);
           render(dataSet, country);
         });
+
         const margin = {
           left: 80,
           top: 20,
@@ -76,14 +77,6 @@ module.exports = exports = (app) => {
           .attr('width', width)
           .attr('height', height);
 
-        //Load Data Function
-        function loadData(data) {
-          dataSet = _.filter(data, ['age_group', '20+ yrs, age-standardized']);
-          _.remove(data, ['sex', 'both'])
-          _.remove(data, ['metric', 'overweight']);
-        }
-
-
         function render(data, country) {
           data = _.filter(dataSet, ['location_name', country]);
           //bind data
@@ -140,9 +133,6 @@ module.exports = exports = (app) => {
           d.age_group_id = +d.age_group_id;
           return d;
         }
-
-        //reading the data
-        d3.csv('./only-obese-data.csv', type, loadData);
 
         //x axis label
         g.append('g')
